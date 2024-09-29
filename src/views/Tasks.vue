@@ -6,41 +6,15 @@
         <NewTask @addTask="fetchAllTask" />
       </div>
       <div class="mt-8">
-        <ul v-for="task in tasks" :key="task.id">
-          <li class="p-2 rounded-lg">
-            <div class="flex align-middle flex-row justify-between">
-              <div class="p-2">
-                <input
-                  type="checkbox"
-                  class="h-6 w-6"
-                  value="true"
-                  :checked="task.completed"
-                  @change="handleCompleteTask(task)"
-                />
-              </div>
-              <div
-                @click="task.isEdit = true"
-                :class="task.completed ? 'line-through text-gray-400' : 'text-lg'"
-                class="p-2"
-              >
-                <p v-if="task.isEdit">
-                  <input
-                    type="text"
-                    class="border-2 border-gray-300 p-2 rounded-lg"
-                    v-model="task.title"
-                    v-focus
-                    @blur="task.isEdit = false"
-                    @keyup.enter="handleUpdateTask(task)"
-                  />
-                </p>
-                <span v-else>
-                  {{ task.title }}
-                </span>
-              </div>
-              <TaskRemove :task="task" @remove="handleRemoveTask" />
-            </div>
-            <hr class="mt-2" />
-          </li>
+        <ul>
+          <Task
+            v-for="task in tasks"
+            :key="task.id"
+            :task="task"
+            @updateTask="handleUpdateTask"
+            @removeTask="handleRemoveTask"
+            @completeTask="handleCompleteTask"
+          />
         </ul>
       </div>
       <div class="mt-8">
@@ -55,6 +29,7 @@
 
 <script setup>
 import NewTask from "../components/NewTask.vue";
+import Task from "../components/Task.vue";
 import TaskRemove from "../components/TaskRemove.vue";
 import { getAllTask, updateTask, removeTask, completeTask, clearCompletedTask } from "../api";
 import { computed, onMounted, ref } from "vue";
@@ -68,12 +43,6 @@ const fetchAllTask = async () => {
 onMounted(() => {
   fetchAllTask();
 });
-
-const vFocus = {
-  mounted(el) {
-    el.focus();
-  },
-};
 
 const isEdit = ref(false);
 
@@ -100,14 +69,6 @@ const handleCompleteTask = async (task) => {
   task.completed = newCompleted;
 };
 
-// const handleClearCompletedTask = async () => {
-//   const completedTaskIds = tasks.value.filter((task) => task.completed).map((task) => task.id);
-//   console.log(completedTaskIds);
-//   // debugger;
-//   await clearCompletedTask(completedTaskIds);
-//   // fetchAllTask();
-// };
-
 const handleClearCompletedTask = async () => {
   const completedTaskIds = tasks.value.filter((task) => task.completed).map((task) => task.id);
 
@@ -115,7 +76,7 @@ const handleClearCompletedTask = async () => {
     const result = await clearCompletedTask(completedTaskIds);
 
     if (result) {
-      fetchAllTask(); // Chỉ làm mới nếu việc xóa thành công
+      fetchAllTask();
     } else {
       alert("Đã xảy ra lỗi khi xóa các tác vụ đã hoàn thành.");
     }
