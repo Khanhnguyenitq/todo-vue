@@ -30,7 +30,7 @@
             {{ task.title }}
           </span>
         </div>
-        <TaskRemove :task="task" @remove="emit('removeTask', task)" />
+        <TaskRemove :task="task" @remove="emit('removeTask', task.id)" />
       </div>
       <hr class="mt-2" />
     </li>

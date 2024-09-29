@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const getAllTask = () => {
+export const fetchAllTask = () => {
   return axios
     .get("http://localhost:3002/tasks")
     .then((res) => res.data)

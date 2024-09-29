@@ -32,19 +32,18 @@
 </template>
 
 <script setup>
-import { addTask } from "@/api";
+import { useStore } from "vuex";
 import { reactive } from "vue";
+
+const store = useStore();
 
 const task = reactive({
   title: "",
   completed: false,
 });
-const emit = defineEmits(["addTask"]);
 
 const handleAddTask = async () => {
-  const data = await addTask(task);
-  emit("addTask", data);
+  await store.dispatch("handleAddTask", task);
   task.title = "";
-  console.log(data);
 };
 </script>
